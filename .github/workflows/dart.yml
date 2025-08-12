@@ -17,29 +17,29 @@ jobs:
       # Setup Flutter SDK
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3' # change if you use a different Flutter version
+          flutter-version: '3.24.3' # change if you use a different version
 
       # Install dependencies
       - name: Install dependencies
-        working-directory: journal/journalFrontend/journal_app
+        working-directory: journalFrontend/journal_app
         run: flutter pub get
 
       # Analyze code
       - name: Analyze project source
-        working-directory: journal/journalFrontend/journal_app
+        working-directory: journalFrontend/journal_app
         run: flutter analyze
 
       # Run tests
       - name: Run tests
-        working-directory: journal/journalFrontend/journal_app
+        working-directory: journalFrontend/journal_app
         run: flutter test
 
       # Build Flutter web
       - name: Build Flutter web
-        working-directory: journal/journalFrontend/journal_app
+        working-directory: journalFrontend/journal_app
         run: flutter build web
 
-      # Log in to Docker Hub (only runs if tests pass)
+      # Log in to Docker Hub (only if tests pass)
       - name: Log in to Docker Hub
         if: success()
         uses: docker/login-action@v3
@@ -50,7 +50,7 @@ jobs:
       # Build Docker image (tag with commit SHA and latest)
       - name: Build Docker image
         if: success()
-        working-directory: journal/journalFrontend/journal_app
+        working-directory: journalFrontend/journal_app
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/journal-app:${{ github.sha }} .
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/journal-app:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/journal-app:latest
