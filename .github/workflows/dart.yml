@@ -19,14 +19,17 @@ jobs:
 
       # Install dependencies
       - name: Install dependencies
+        working-directory: journal/journalFrontend/journal_app
         run: dart pub get
 
       # Analyze code
       - name: Analyze project source
+        working-directory: journal/journalFrontend/journal_app
         run: dart analyze
 
       # Run tests
       - name: Run tests
+        working-directory: journal/journalFrontend/journal_app
         run: dart test
 
       # Log in to Docker Hub
@@ -36,11 +39,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Build Docker image
+      # Build Docker image (tag with commit SHA and latest)
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-dart-app:latest .
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/journal-app:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/journal-app:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/journal-app:latest
 
       # Push Docker image
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-dart-app:latest
-      
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/journal-app:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/journal-app:latest
