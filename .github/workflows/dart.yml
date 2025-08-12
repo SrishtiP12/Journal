@@ -1,4 +1,4 @@
-name: Dart CI & Docker Deploy
+name: Flutter CI & Docker Deploy
 
 on:
   push:
@@ -14,23 +14,30 @@ jobs:
       # Checkout repository
       - uses: actions/checkout@v4
 
-      # Setup Dart SDK
-      - uses: dart-lang/setup-dart@v1
+      # Setup Flutter SDK
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.3' # change if you use a different Flutter version
 
       # Install dependencies
       - name: Install dependencies
         working-directory: journal/journalFrontend/journal_app
-        run: dart pub get
+        run: flutter pub get
 
       # Analyze code
       - name: Analyze project source
         working-directory: journal/journalFrontend/journal_app
-        run: dart analyze
+        run: flutter analyze
 
       # Run tests
       - name: Run tests
         working-directory: journal/journalFrontend/journal_app
-        run: dart test
+        run: flutter test
+
+      # Build Flutter web
+      - name: Build Flutter web
+        working-directory: journal/journalFrontend/journal_app
+        run: flutter build web
 
       # Log in to Docker Hub (only runs if tests pass)
       - name: Log in to Docker Hub
