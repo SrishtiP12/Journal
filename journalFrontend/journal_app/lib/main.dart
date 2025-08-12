@@ -4,6 +4,15 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+// Base URL for the API
+const String baseUrl = 'https://journal-xr5m.onrender.com';
+
+// Function to construct API URLs correctly
+String getApiUrl(String endpoint) {
+  endpoint = endpoint.replaceAll(RegExp(r'^/+'), '');
+  return '$baseUrl/api/$endpoint';
+}
+
 void main() => runApp(JournalApp());
 
 class JournalApp extends StatelessWidget {
@@ -72,7 +81,8 @@ class _JournalEntryPageState extends State<JournalEntryPage> with SingleTickerPr
   Future<void> _fetchEntries() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/entries'),
+        Uri.parse(getApiUrl('entries')),
+        headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
         setState(() {
@@ -96,7 +106,7 @@ class _JournalEntryPageState extends State<JournalEntryPage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/entries'),
+        Uri.parse(getApiUrl('entries')),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'date': DateFormat('yyyy-MM-dd').format(_selectedDate),
